@@ -25,14 +25,36 @@ class App:
                 "Type the name of the monster (or 'q' to quit): "
             )
         ) != "q":
-            monster_data = self._get_function(
-                self.ROOT_URL + choice.lower().replace(" ", "-")
+            monster_data = self._expose_names(
+                self._get_function(self.ROOT_URL + choice.lower().replace(" ", "-"))
             )
             self._print_function("Monsteronomicon presents!\n")
             for key, value in monster_data.items():
-                if isinstance(value, str):
-                    self._print_function(f"{key}: {value}")
+                self._print_function(f"{key}: {value}")
             self._print_function("")
+
+    def _expose_names(self, monster_data: Any) -> Any:
+        result = {}
+        for key, value in monster_data.items():
+            if isinstance(value, (str, int, float, bool)) or not value:
+                result[key] = value
+            elif (
+                isinstance(value, list)
+                and isinstance(value[0], dict)
+                and value[0].get("name")
+            ):
+                result[key] = ", ".join(d["name"] for d in value)
+            elif isinstance(value, list) and isinstance(value[0], str):
+                result[key] = ", ".join(value)
+            elif key in ("speed", "senses"):
+                for k, v in value.items():
+                    result[f"{key} ({k})"] = v
+            elif key == "proficiencies":
+                for prof in value:
+                    result[f"{key} ({prof['proficiency']['name']})"] = prof["value"]
+            else:
+                raise ValueError(f"Unknown key in monster description: {key}")
+        return result
 
 
 if __name__ == "__main__":

@@ -1,0 +1,38 @@
+index: adult-black-dragon
+name: Adult Black Dragon
+size: Huge
+type: dragon
+alignment: chaotic evil
+armor_class: 19
+hit_points: 195
+hit_dice: 17d12
+hit_points_roll: 17d12+85
+speed (walk): 40 ft.
+speed (fly): 80 ft.
+speed (swim): 40 ft.
+strength: 23
+dexterity: 14
+constitution: 21
+intelligence: 14
+wisdom: 13
+charisma: 17
+proficiencies (Saving Throw: DEX): 7
+proficiencies (Saving Throw: CON): 10
+proficiencies (Saving Throw: WIS): 6
+proficiencies (Saving Throw: CHA): 8
+proficiencies (Skill: Perception): 11
+proficiencies (Skill: Stealth): 7
+damage_vulnerabilities: []
+damage_resistances: []
+damage_immunities: acid
+condition_immunities: []
+senses (blindsight): 60 ft.
+senses (darkvision): 120 ft.
+senses (passive_perception): 21
+languages: Common, Draconic
+challenge_rating: 14
+xp: 11500
+special_abilities: Amphibious, Legendary Resistance
+actions: Multiattack, Bite, Claw, Tail, Frightful Presence, Acid Breath
+legendary_actions: Detect, Tail Attack, Wing Attack (Costs 2 Actions)
+url: /api/monsters/adult-black-dragon
