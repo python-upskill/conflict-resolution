@@ -56,6 +56,102 @@ def test_one_check():
     )
 
 
+def test_error():
+    input_mock = Mock(side_effect=["Dragon", "q"])
+    get_mock = Mock(side_effect=({"error": "not found"}, {}))
+    print_mock = Mock()
+    app = App(get_mock, input_mock, print_mock)
+
+    app.loop()
+
+    assert input_mock.call_count == 2
+    input_mock.assert_has_calls(
+        [
+            call("Type the name of the monster (or 'q' to quit): "),
+            call("Type the name of the monster (or 'q' to quit): "),
+        ]
+    )
+    assert get_mock.call_count == 2
+    get_mock.assert_has_calls(
+        [
+            call("https://www.dnd5eapi.co/api/monsters/dragon"),
+            call("https://www.dnd5eapi.co/api/monsters/?name=dragon"),
+        ]
+    )
+    assert print_mock.call_count == 1
+    print_mock.assert_has_calls([call("Sorry! No monsters found!")])
+
+
+def test_pick_option():
+    input_mock = Mock(side_effect=["Dragon", "1", "q"])
+    get_mock = Mock(
+        side_effect=(
+            {"error": "not found"},
+            {
+                "count": 3,
+                "results": [
+                    {
+                        "index": "adult-black-dragon",
+                        "name": "Adult Black Dragon",
+                        "url": "/api/monsters/adult-black-dragon",
+                    },
+                    {
+                        "index": "adult-blue-dragon",
+                        "name": "Adult Blue Dragon",
+                        "url": "/api/monsters/adult-blue-dragon",
+                    },
+                    {
+                        "index": "adult-brass-dragon",
+                        "name": "Adult Brass Dragon",
+                        "url": "/api/monsters/adult-brass-dragon",
+                    },
+                ],
+            },
+            {
+                "index": "adult-blue-dragon",
+                "name": "Adult Blue Dragon",
+                "size": "Huge",
+                "type": "dragon",
+                "alignment": "lawful evil",
+            },
+        )
+    )
+    print_mock = Mock()
+    app = App(get_mock, input_mock, print_mock)
+
+    app.loop()
+
+    assert input_mock.call_count == 3
+    input_mock.assert_has_calls(
+        [
+            call("Type the name of the monster (or 'q' to quit): "),
+            call("Which one of these? "),
+            call("Type the name of the monster (or 'q' to quit): "),
+        ]
+    )
+    assert get_mock.call_count == 3
+    get_mock.assert_has_calls(
+        [
+            call("https://www.dnd5eapi.co/api/monsters/dragon"),
+            call("https://www.dnd5eapi.co/api/monsters/?name=dragon"),
+            call("https://www.dnd5eapi.co/api/monsters/adult-blue-dragon"),
+        ]
+    )
+    assert print_mock.call_count == 8
+    print_mock.assert_has_calls(
+        [
+            call("0. Adult Black Dragon\n1. Adult Blue Dragon\n2. Adult Brass Dragon"),
+            call("Monsteronomicon presents!\n"),
+            call("index: adult-blue-dragon"),
+            call("name: Adult Blue Dragon"),
+            call("size: Huge"),
+            call("type: dragon"),
+            call("alignment: lawful evil"),
+            call(""),
+        ]
+    )
+
+
 def test_multiple_checks():
     input_mock = Mock(side_effect=["Adult black Dragon", "Pit Fiend", "q"])
     get_mock = Mock(
